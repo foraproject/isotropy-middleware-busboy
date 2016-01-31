@@ -1,5 +1,9 @@
 /* @flow */
 export type IncomingMessage = {
+  removeListener: (name: string) => void;
+  removeAllListeners: (name: string) => void;
+  on: (name: string, fn: Function) => void;
+  pipe: (dest: any) => void;
   headers: Object;
   httpVersion: string;
   method: string;
@@ -7,10 +11,8 @@ export type IncomingMessage = {
   setTimeout: (msecs: number, callback: Function) => void;
   statusCode: number;
   url: string;
-  href: any,
-  pathname: any,
-  search: any,
-  query: any  
+  files: any;
+  body: any;
 }
 
 export type ServerResponse = {

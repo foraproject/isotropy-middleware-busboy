@@ -9,11 +9,20 @@ describe('isotropy-middleware-busboy', () => {
     const req = request();
     const res = {};
     await busboy(req, res);
+
     req.body.file_name_0.length.should.equal(3);
     req.body._csrf.should.equal("ooxx");
+
     Object.keys(req.body).length.should.equal(3);
+
     req.files.upload_file_0.filename.should.equal("1k_a.dat");
+    req.files.upload_file_0.transferEncoding.should.equal("7bit");
+    req.files.upload_file_0.mimeType.should.equal("application/octet-stream");
+
     req.files.upload_file_1.filename.should.equal("1k_b.dat");
+    req.files.upload_file_1.transferEncoding.should.equal("7bit");
+    req.files.upload_file_1.mimeType.should.equal("application/octet-stream");
+
     Object.keys(req.files).length.should.equal(3);
   });
 

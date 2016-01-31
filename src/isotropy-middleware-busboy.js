@@ -1,8 +1,11 @@
 /* @flow */
 import busboy from "isotropy-busboy";
-import type { IncomingMessage, ServerResponse } from "./flow/http-types";
 
-function streamToPromise(stream) {
+import type { FilePartType, FieldPartType, PartType } from "isotropy-busboy";
+import type { IncomingMessage, ServerResponse } from "./flow/http-types";
+import type { Stream } from "./flow/stream";
+
+function streamToPromise(stream: Stream) {
   const buffers = [];
   stream.on("data", (buffer) => buffers.push(buffer));
   return new Promise(function(resolve, reject) {
@@ -13,7 +16,7 @@ function streamToPromise(stream) {
   });
 }
 
-function addPart(obj, part, getValue) {
+function addPart<TPart: PartType, TValue>(obj: Object, part: TPart, getValue: (i: TPart) => TValue) {
   if (typeof obj[part.fieldname] !== "undefined") {
     if (obj.hasOwnProperty(part.fieldname)) {
       if (obj[part.fieldname] instanceof Array) {
@@ -33,26 +36,38 @@ function addPart(obj, part, getValue) {
 */
 export default async function(req: IncomingMessage, res: ServerResponse) : Promise {
   const getPart = busboy(req);
-  let part;
-  while(part = await getPart()) {
-    if (!part) break;
-    if (part.value) {
-      req.body = req.body || {};
-      addPart(req.body, part, p => p.value);
-    } else {
-      req.files = req.files || {};
-      const file = await streamToPromise(part.file);
-      addPart(
-        req.files,
-        part,
-        (p) => {
-          return {
-            fieldname: part.fieldname,
-            filename: part.filename,
-            file
-          };
+  let _part: ?PartType;
+  while(_part = (await getPart())) {
+    if (_part != null) {
+      switch(_part.type) {
+        case "field": {
+          const part: FieldPartType = _part;
+          req.body = req.body || {};
+          addPart(req.body, part, p => p.value);
+          break;
         }
-      );
+        case "file": {
+          const part: FilePartType = _part;
+          req.files = req.files || {};
+          const file = await streamToPromise(part.file);
+          addPart(
+            req.files,
+            part,
+            (p) => {
+              return {
+                fieldname: part.fieldname,
+                filename: part.filename,
+                file,
+                transferEncoding: part.transferEncoding,
+                mimeType: part.mimeType
+              };
+            }
+          );
+          break;
+        }
+      }
+    } else {
+      break;
     }
   }
 }
