@@ -9,7 +9,6 @@ describe('isotropy-middleware-busboy', () => {
     const req = request();
     const res = {};
     await busboy(req, res);
-
     req.body.file_name_0.length.should.equal(3);
     req.body._csrf.should.equal("ooxx");
 
