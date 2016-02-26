@@ -1,7 +1,7 @@
 {
   "author": "Jeswin Kumar <jeswinpk@agilehead.com>",
   "name": "isotropy-middleware-busboy",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Parse a url and insert it into req.",
   "main": "dist/isotropy-middleware-busboy.js",
   "scripts": {
