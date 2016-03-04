@@ -2,8 +2,8 @@
 import busboy from "isotropy-busboy";
 
 import type { BodyType, FormDataType, FormDataEntryType } from "isotropy-busboy";
-import type { IncomingMessage, ServerResponse } from "./flow/http-types";
-import type { Stream } from "./flow/stream";
+import type { ProcessedIncomingMessage, ServerResponse } from "isotropy-interfaces/node/http";
+import type { Stream } from "isotropy-interfaces/node/stream";
 
 function streamToPromise(stream: Stream) {
   const buffers = [];
@@ -16,7 +16,7 @@ function streamToPromise(stream: Stream) {
   });
 }
 
-function addPart<TPart: FormDataEntryType, TValue>(obj: Object, part: TPart, getValue: (i: TPart) => TValue) {
+function addPart<TPart: FormDataEntryType, TValue>(obj: any, part: TPart, getValue: (i: TPart) => TValue) {
   if (typeof obj[part.fieldname] !== "undefined") {
     if (obj.hasOwnProperty(part.fieldname)) {
       if (obj[part.fieldname] instanceof Array) {
@@ -34,7 +34,7 @@ function addPart<TPart: FormDataEntryType, TValue>(obj: Object, part: TPart, get
   For files, we use a Buffer by default.
   TODO: We can try to pipe it out to a /tmp file later. This could be added as an option.
 */
-export default async function(req: IncomingMessage, res: ServerResponse) : Promise {
+export default async function(req: ProcessedIncomingMessage, res: ServerResponse) : Promise {
   const getPart = busboy(req);
   let part: ?FormDataEntryType;
   while(part = (await getPart())) {
