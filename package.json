@@ -1,7 +1,7 @@
 {
   "author": "Jeswin Kumar <jeswinpk@agilehead.com>",
   "name": "isotropy-middleware-busboy",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Parse a url and insert it into req.",
   "main": "dist/isotropy-middleware-busboy.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nodejam/isotropy-middleware-busboy.git"
+    "url": "https://github.com/jeswin/isotropy-middleware-busboy.git"
   },
   "dependencies": {
     "isotropy-busboy": "*",
